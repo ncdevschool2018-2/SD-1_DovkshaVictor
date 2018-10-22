@@ -1,0 +1,96 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">PMAN</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProjects" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Projects
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#" *ngFor="let project of projects">{{project.code}}</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="" data-toggle="modal" data-target="#modalNewProject">New project</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTasks" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Users
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="" data-toggle="modal" data-target="#modalNewUser">New user</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Users list</a>
+        </div>
+      </li>
+    </ul>
+    <a class="btn btn-primary active my-2 my-lg-0" routerLink="/login" routerLinkActive="active">Logout</a>
+  </div>
+</nav>
+
+<div class="modal fade" id="modalNewProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title">New project</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form>
+          <div class="form-group">
+            <label for="code" class="form-control-label">Code:</label>
+            <input type="text" class="form-control" id="code" name="code" [(ngModel)]="editableProject.code" #code="ngModel" required/>
+          </div>
+          <div class="form-group">
+            <label for="summary" class="form-control-label">Summary:</label>
+            <textarea class="form-control" id="summary" name="summary" [(ngModel)]="editableProject.summary" #summary="ngModel" required></textarea>
+          </div>
+        </form>
+        </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button class="btn btn-default" (click)="_createProject(code, summary)">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalNewUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title">New user</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="email" class="form-control-label">Email:</label>
+            <input type="text" class="form-control" id="email">
+          </div>
+          <div class="form-group">
+            <label for="role" class="form-control-label">Role:</label>
+            <select id = "role" class="custom-select">
+              <option selected value="project_manager">Project Manager</option>
+              <option value="developer">Developer</option>
+              <option value="tester">Tester</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button class="btn btn-default">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
