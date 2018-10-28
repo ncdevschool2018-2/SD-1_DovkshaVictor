@@ -13,14 +13,14 @@ export class ProjectService { //todo create interface
   }
 
   getProjects(): Observable<Project[]> {
-    return this.http.get<Project[]>('http://localhost:8080/projects/');
+    return this.http.get<Project[]>('/api/projects/');
   }
 
   createProject(project: Project): Observable<Project> {
-    return this.http.post<Project>('http://localhost:8080/projects/', project);
+    return this.http.post<Project>('/api/projects/', project);
   }
 
   deleteProject(project: string): Observable<void> {
-    return this.http.delete<void>('http://localhost:8080/projects/' + project);
+    return this.http.delete<void>('/api/projects/' + project);
   }
 }

@@ -1,29 +1,60 @@
 package com.netcracker.viktuk.pman.backend.entity;
+import com.netcracker.viktuk.pman.backend.entity.enums.Priority;
+import com.netcracker.viktuk.pman.backend.entity.enums.Status;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
+@Table(name = "tasks")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project")
     Project project;
 
-    @Column(name = "task")
-    String task;
+    @NotNull
+    @Column(name = "name")
+    String name;
 
-    String priority;
-    String status;
-    String created;
-    String updated;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    Priority priority;
+
+    @Enumerated(EnumType.STRING)
+    Status status;
+
+    Date created;
+    Date updated;
+
     String due_date;
     String estimation;
-    String assigned;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    User author;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    User assigned;
+
     String description;
+
+    @PrePersist
+    protected void onCreate() {
+        created = new Date();
+        updated = created;
+        status = Status.OPEN;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updated = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -41,43 +72,43 @@ public class Task {
         this.project = project;
     }
 
-    public String getTask() {
-        return task;
+    public String getName() {
+        return name;
     }
 
-    public void setTask(String task) {
-        this.task = task;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(Priority priority) {
         this.priority = priority;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
-    public String getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 
@@ -97,11 +128,11 @@ public class Task {
         this.estimation = estimation;
     }
 
-    public String getAssigned() {
+    public User getAssigned() {
         return assigned;
     }
 
-    public void setAssigned(String assigned) {
+    public void setAssigned(User assigned) {
         this.assigned = assigned;
     }
 
@@ -111,5 +142,13 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
     }
 }

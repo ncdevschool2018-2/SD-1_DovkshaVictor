@@ -1,15 +1,16 @@
 package com.netcracker.viktuk.pman.backend.controller;
 
 import com.netcracker.viktuk.pman.backend.entity.Project;
+import com.netcracker.viktuk.pman.backend.entity.User;
 import com.netcracker.viktuk.pman.backend.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/projects")
 public class ProjectController {
     private final ProjectRepository projectRepository;
@@ -35,7 +36,8 @@ public class ProjectController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public Project save(@RequestBody Project project) {
+    public Project save(@AuthenticationPrincipal User user, @RequestBody Project project) {
+        project.setManager(user);
         return projectRepository.save(project);
     }
 

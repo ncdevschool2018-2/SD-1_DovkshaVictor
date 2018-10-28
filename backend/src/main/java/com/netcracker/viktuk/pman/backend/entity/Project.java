@@ -16,6 +16,9 @@ public class Project {
     @Column(name = "summary")
     private String summary;
 
+    @ManyToOne()
+    private User manager;
+
     public Long getId() {
         return id;
     }
@@ -38,5 +41,13 @@ public class Project {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public User getManager() {
+        return manager;
+    }
+
+    public void setManager(User manager) {
+        this.manager = manager;
     }
 }

@@ -12,15 +12,15 @@ export class TaskService { //todo create interface
   constructor(private http: HttpClient) {
   }
 
-  getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>('http://localhost:8080/tasks/');
+  getTasks(project_id: number): Observable<Task[]> {
+    return this.http.get<Task[]>('/api/tasks/project/'+ project_id);
   }
 
-  createTask(project: Task): Observable<Task> {
-    return this.http.post<Task>('http://localhost:8080/tasks/', project);
+  createTask(project_id: number, project: Task): Observable<Task> {
+    return this.http.post<Task>('/api/tasks/project/'+ project_id, project);
   }
 
   deleteTask(project: string): Observable<void> {
-    return this.http.delete<void>('http://localhost:8080/tasks/' + project);
+    return this.http.delete<void>('/api/tasks/' + project);
   }
 }

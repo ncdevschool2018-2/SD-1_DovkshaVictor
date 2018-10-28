@@ -1,27 +1,34 @@
 package com.netcracker.viktuk.pman.backend.controller;
 
+import com.netcracker.viktuk.pman.backend.entity.Project;
 import com.netcracker.viktuk.pman.backend.entity.Task;
+import com.netcracker.viktuk.pman.backend.entity.User;
+import com.netcracker.viktuk.pman.backend.repository.ProjectRepository;
 import com.netcracker.viktuk.pman.backend.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/tasks")
 public class TaskController {
     private final TaskRepository taskRepository;
+    private final ProjectRepository projectRepository;
 
     @Autowired
-    public TaskController(TaskRepository projectRepository) {
-        this.taskRepository = projectRepository;
+    public TaskController(TaskRepository taskRepository, ProjectRepository projectRepository) {
+        this.taskRepository = taskRepository;
+        this.projectRepository = projectRepository;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Iterable<Task> getAllTasks() {
-        return taskRepository.findAll();
+    @RequestMapping(value = "/project/{id}", method = RequestMethod.GET)
+    public List<Task> getAllTasks(@PathVariable(name = "id") Long id)
+    {
+        return taskRepository.findAllByProject_Id(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -34,9 +41,15 @@ public class TaskController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public Task save(@RequestBody Task task) {
-        return taskRepository.save(task);
+    @RequestMapping(value = "/project/{id}", method = RequestMethod.POST)
+    public ResponseEntity<Task> save(@AuthenticationPrincipal User user, @PathVariable(name = "id") Long id, @RequestBody Task task) {
+        Project project = projectRepository.findProjectById(id);
+        if(project!=null){
+            task.setProject(project);
+            task.setAuthor(user);
+            return ResponseEntity.ok(taskRepository.save(task));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
