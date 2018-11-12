@@ -16,4 +16,8 @@ export class UserService { //todo create interface
   createUser(user: User): Observable<User> {
     return this.http.post<User>('/api/users/', user);
   }
+
+  getYourself(): Observable<User> {
+    return this.http.get<User>('/api/users/');
+  }
 }

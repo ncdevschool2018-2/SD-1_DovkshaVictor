@@ -33,6 +33,9 @@ public class Task {
     Date created;
     Date updated;
 
+    Date resolved;
+    Date closed;
+
     String due_date;
     String estimation;
 
@@ -54,6 +57,12 @@ public class Task {
     @PreUpdate
     protected void onUpdate() {
         updated = new Date();
+        if(status==Status.READY_FOR_TEST){
+            resolved = updated;
+        }
+        if(status==Status.CLOSED){
+            closed = updated;
+        }
     }
 
     public Long getId() {
@@ -150,5 +159,21 @@ public class Task {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public Date getResolved() {
+        return resolved;
+    }
+
+    public void setResolved(Date resolved) {
+        this.resolved = resolved;
+    }
+
+    public Date getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Date closed) {
+        this.closed = closed;
     }
 }

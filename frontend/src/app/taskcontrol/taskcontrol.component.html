@@ -1,0 +1,33 @@
+<app-navbar></app-navbar>
+
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{{task.name}}</h3>
+      <div class="btn-group">
+        <button type="button" class="btn btn-success" (click)="_startTask()" *ngIf="_showDevelopersButton()">Start</button>
+        <button type="button" class="btn btn-info" (click)="_readyForTestTask()" *ngIf="_showDevelopersButton()">Ready for test</button>
+        <button type="button" class="btn btn-warning" (click)="_reopenTask()" *ngIf="_showTestersButton()">Reopen</button>
+        <button type="button" class="btn btn-danger" (click)="_closeTask()" *ngIf="_showTestersButton()">Close</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <h4 class="card-title">Details</h4>
+      <p class="card-text">{{task.description}}</p>
+      <div class="row">
+        <div class="col">
+          <p>Priority: <b [innerHtml] = "task.priority| priority"></b></p>
+          <p>Status: <b [innerHtml] = "task.status| status"></b></p>
+        </div>
+        <div class="col">
+          <p *ngIf="task.assigned">Assigned: {{task.assigned.username}}</p>
+          <p>Estimation: {{task.estimation}}</p>
+          <p>Created: {{task.created | date:'medium'}}</p>
+          <p>Updated: {{task.updated | date:'medium'}}</p>
+          <p>Resolved: {{task.resolved | date:'medium'}}</p>
+          <p>Closed: {{task.closed | date:'medium'}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

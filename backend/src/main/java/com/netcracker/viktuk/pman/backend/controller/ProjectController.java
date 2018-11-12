@@ -2,8 +2,10 @@ package com.netcracker.viktuk.pman.backend.controller;
 
 import com.netcracker.viktuk.pman.backend.entity.Project;
 import com.netcracker.viktuk.pman.backend.entity.User;
+import com.netcracker.viktuk.pman.backend.entity.enums.Role;
 import com.netcracker.viktuk.pman.backend.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +38,13 @@ public class ProjectController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public Project save(@AuthenticationPrincipal User user, @RequestBody Project project) {
-        project.setManager(user);
-        return projectRepository.save(project);
+    public ResponseEntity<Project> save(@AuthenticationPrincipal User user, @RequestBody Project project) {
+        if(user.getRole()== Role.ADMIN || user.getRole()== Role.PROJECT_MANAGER){
+            project.setManager(user);
+            return ResponseEntity.ok(projectRepository.save(project));
+        }else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

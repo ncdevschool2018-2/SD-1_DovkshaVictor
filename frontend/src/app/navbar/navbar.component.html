@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">PMAN</a>
+  <a class="navbar-brand" routerLink = "/dashboard/1/1" routerLinkActive="active">PMAN</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -7,14 +7,14 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" routerLink = "/dashboard/1/1" routerLinkActive="active">Home</a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProjects" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Projects
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" *ngFor="let project of projects"  [routerLink] = "['/projects', project.id]" routerLinkActive="active">{{project.code}}</a>
+          <a class="dropdown-item" *ngFor="let project of projects"  [routerLink] = "['/dashboard/', project.id, 1]" routerLinkActive="active">{{project.code}}</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="" data-toggle="modal" data-target="#modalNewProject">New project</a>
         </div>
@@ -30,21 +30,21 @@
         </div>
       </li>
     </ul>
-    <a class="btn btn-primary active my-2 my-lg-0" routerLink="/login" routerLinkActive="active">Logout</a>
+    <a class="btn btn-primary active" routerLink="/login" routerLinkActive="active">Logout</a>
   </div>
 </nav>
 
 <div class="modal fade" id="modalNewProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <h4 class="modal-title">New project</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-            <form>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title">New project</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
           <div class="form-group">
             <label for="code" class="form-control-label">Code:</label>
             <input type="text" class="form-control" id="code" name="code" [(ngModel)]="editableProject.code" #code="ngModel" required/>
@@ -54,12 +54,12 @@
             <textarea class="form-control" id="summary" name="summary" [(ngModel)]="editableProject.summary" #summary="ngModel" required></textarea>
           </div>
         </form>
-        </div>
-            <div class="modal-footer d-flex justify-content-center">
-                <button class="btn btn-default" data-dismiss="modal" (click)="_createProject(code, summary)">Create</button>
-            </div>
-        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button class="btn btn-default" data-dismiss="modal" (click)="_createProject(code, summary)">Create</button>
+      </div>
     </div>
+  </div>
 </div>
 
 
@@ -85,7 +85,7 @@
           <div class="form-group">
             <label for="role" class="form-control-label">Role:</label>
             <select id="role" name="role" class="custom-select" [(ngModel)]="editableUser.role" #role="ngModel" required>
-              <option *ngFor="let key of keys" [value]="key" [label]="role_keys[key]"></option>
+              <option *ngFor="let key of keys_for_roles" [value]="key" [label]="role_keys[key]"></option>
             </select>
           </div>
         </form>

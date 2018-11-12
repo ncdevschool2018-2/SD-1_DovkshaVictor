@@ -4,8 +4,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 
 import {AppComponent} from './app.component';
-import {NavbarComponent} from './navbar/navbar.component';
-import {TaskListComponent} from './task-list/task-list.component';
 import {LoginComponent} from './login/login.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {ProjectService} from "./service/project.service";
@@ -15,15 +13,23 @@ import {AppRoutingModule} from "./app-routing.module";
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {TokenInterceptor} from './token.interceptor';
 import {UserService} from "./service/user.service";
+import {TimesPipe} from "./pipes/times";
+import {TaskcontrolComponent} from "./taskcontrol/taskcontrol.component";
+import {NavbarComponent } from './navbar/navbar.component';
+import {PriorityPipe} from "./pipes/priority_pipe";
+import {StatusPipe} from "./pipes/status_pipe";
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
-    TaskListComponent,
     LoginComponent,
-    DashboardComponent
+    NavbarComponent,
+    DashboardComponent,
+    TaskcontrolComponent,
+    TimesPipe,
+    PriorityPipe,
+    StatusPipe
   ],
   imports: [
     BrowserModule,

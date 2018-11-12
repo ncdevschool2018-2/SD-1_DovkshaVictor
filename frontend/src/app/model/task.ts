@@ -6,10 +6,12 @@ export class Task {
   id: number;
   project: Project;
   name: string;
-  priority: Priority;
-  status: Status;
+  priority: string;
+  status: string;
   created: Date;
   updated: Date;
+  resolved: Date;
+  closed: Date;
   due_date: string;
   estimation: string;
   assigned: string;
