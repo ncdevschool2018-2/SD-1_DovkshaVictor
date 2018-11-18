@@ -5,10 +5,11 @@
     <div class="card-header">
       <h3 class="card-title">{{task.name}}</h3>
       <div class="btn-group">
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalAssignUser" *ngIf="_showProjectManagerButton()">Assign</button>
         <button type="button" class="btn btn-success" (click)="_startTask()" *ngIf="_showDevelopersButton()">Start</button>
         <button type="button" class="btn btn-info" (click)="_readyForTestTask()" *ngIf="_showDevelopersButton()">Ready for test</button>
-        <button type="button" class="btn btn-warning" (click)="_reopenTask()" *ngIf="_showTestersButton()">Reopen</button>
-        <button type="button" class="btn btn-danger" (click)="_closeTask()" *ngIf="_showTestersButton()">Close</button>
+        <button type="button" class="btn btn-danger" (click)="_reopenTask()" *ngIf="_showTestersButton()">Reopen</button>
+        <button type="button" class="btn btn-warning" (click)="_closeTask()" *ngIf="_showTestersButton()">Close</button>
       </div>
     </div>
     <div class="card-body">
@@ -20,13 +21,39 @@
           <p>Status: <b [innerHtml] = "task.status| status"></b></p>
         </div>
         <div class="col">
-          <p *ngIf="task.assigned">Assigned: {{task.assigned.username}}</p>
+          <p *ngIf="task.assigned">Assigned: <a [routerLink]="['/user/', task.assigned]" routerLinkActive="active">{{task.assigned}}</a></p>
           <p>Estimation: {{task.estimation}}</p>
           <p>Created: {{task.created | date:'medium'}}</p>
           <p>Updated: {{task.updated | date:'medium'}}</p>
           <p>Resolved: {{task.resolved | date:'medium'}}</p>
           <p>Closed: {{task.closed | date:'medium'}}</p>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalAssignUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title">Assign a user to this task:</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+              <input type="text" id="username" class="form-control" placeholder="Start typing username..." #username (keyup)="findUsers(username.value)" autocomplete="off">
+          </div>
+        </form>
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let user of users_to_assign" (click)="selected_username_to_assign = user.username" [class.active]="selected_username_to_assign == user.username">{{user.username}}</li>
+          </ul>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button class="btn btn-default" data-dismiss="modal" (click)="_assignUser(username)">Assign</button>
       </div>
     </div>
   </div>

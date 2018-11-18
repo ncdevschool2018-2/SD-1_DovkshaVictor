@@ -1,4 +1,7 @@
 package com.netcracker.viktuk.pman.backend.entity;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.netcracker.viktuk.pman.backend.entity.enums.Priority;
 import com.netcracker.viktuk.pman.backend.entity.enums.Status;
 
@@ -39,11 +42,16 @@ public class Task {
     String due_date;
     String estimation;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     User author;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     User assigned;
+
+    @Transient
+    String assigned_username;
 
     String description;
 
@@ -175,5 +183,21 @@ public class Task {
 
     public void setClosed(Date closed) {
         this.closed = closed;
+    }
+
+    @JsonGetter("assigned")
+    public String getAssignedUsernameJSON() {
+        if(assigned!=null){
+            return assigned.getUsername();
+        }else return null;
+    }
+
+    public String getAssigned_username() {
+        return assigned_username;
+    }
+
+    @JsonSetter("assigned")
+    public void setAssigned_username(String assigned_username) {
+        this.assigned_username = assigned_username;
     }
 }

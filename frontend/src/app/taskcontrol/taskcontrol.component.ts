@@ -6,6 +6,9 @@ import {Task} from "../model/task";
 import {Status} from "../model/enums/status";
 import {AuthService} from "../service/auth.service";
 import {Role} from "../model/enums/role";
+import {UserService} from "../service/user.service";
+import { map } from 'rxjs/operators';
+import {User} from "../model/user";
 
 @Component({
   selector: 'app-taskcontrol',
@@ -18,8 +21,10 @@ export class TaskcontrolComponent implements OnInit {
   public current_user: any;
   private task: Task;
   private subscriptions: Subscription[] = [];
+  public users_to_assign: User[] = [];
+  selected_username_to_assign:string;
 
-  constructor(private activateRoute: ActivatedRoute, private taskService: TaskService, private authService: AuthService){
+  constructor(private activateRoute: ActivatedRoute, private taskService: TaskService, private authService: AuthService, private userService: UserService){
     this.subscriptions.push(activateRoute.params.subscribe(params=>{
       this.task_id = Number(params['task_id']);
     }));
@@ -64,6 +69,24 @@ export class TaskcontrolComponent implements OnInit {
     this.changeTaskStatus(Status.CLOSED);
   }
 
+  public findUsers(username: string):void{
+      this.subscriptions.push(this.userService.findUsers(username).subscribe( users =>{
+        this.users_to_assign = users as User[];
+      }));
+      console.log(this.selected_username_to_assign);
+      this.selected_username_to_assign = "";
+  }
+
+  public _assignUser():void{
+    this.task.assigned= this.selected_username_to_assign;
+    this.subscriptions.push(this.taskService.updateTask(this.task).subscribe( ()=>{
+      this.loadTask();
+    },error => {
+      this.loadTask();
+    }));
+    this.selected_username_to_assign = "";
+  }
+
   public _showDevelopersButton(){
     if(this.current_user==undefined) return false;
     let role : Role = Role[String(this.current_user.role)];
@@ -81,4 +104,14 @@ export class TaskcontrolComponent implements OnInit {
     }
     return false;
   }
+
+  public _showProjectManagerButton(){
+    if(this.current_user==undefined) return false;
+    let role : Role = Role[String(this.current_user.role)];
+    if(role == Role.ADMIN|| role == Role.PROJECT_MANAGER){
+      return true;
+    }
+    return false;
+  }
+
 }

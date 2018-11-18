@@ -29,4 +29,15 @@ public class UserController {
     public ResponseEntity<User> getYourself(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(user);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/find/{username}")
+    public Iterable<User> findUsers(@PathVariable String username){
+        return userService.findUsersByUsername(username);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/get/{username}")
+    public ResponseEntity<User> getUser(@PathVariable String username){
+        return ResponseEntity.ok((User) userService.loadUserByUsername(username));
+    }
+
 }

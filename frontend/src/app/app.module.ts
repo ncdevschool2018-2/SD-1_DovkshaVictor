@@ -18,6 +18,8 @@ import {TaskcontrolComponent} from "./taskcontrol/taskcontrol.component";
 import {NavbarComponent } from './navbar/navbar.component';
 import {PriorityPipe} from "./pipes/priority_pipe";
 import {StatusPipe} from "./pipes/status_pipe";
+import { UserpageComponent } from './userpage/userpage.component';
+import {RolePipe} from "./pipes/role_pipe";
 
 
 @NgModule({
@@ -27,15 +29,17 @@ import {StatusPipe} from "./pipes/status_pipe";
     NavbarComponent,
     DashboardComponent,
     TaskcontrolComponent,
+    UserpageComponent,
     TimesPipe,
     PriorityPipe,
-    StatusPipe
+    StatusPipe,
+    RolePipe
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    AppRoutingModule,
+    AppRoutingModule
   ],
   providers: [
     ProjectService,

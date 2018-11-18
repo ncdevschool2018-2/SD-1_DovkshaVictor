@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Task} from "../model/task";
 import {User} from "../model/user";
 
 @Injectable({
@@ -19,5 +18,13 @@ export class UserService { //todo create interface
 
   getYourself(): Observable<User> {
     return this.http.get<User>('/api/users/');
+  }
+
+  findUsers(username: string){
+    return this.http.get<User[]>('api/users/find/'+username);
+  }
+
+  getUser(username: string){
+    return this.http.get<User>('api/users/get/'+username);
   }
 }

@@ -1,5 +1,6 @@
 package com.netcracker.viktuk.pman.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.netcracker.viktuk.pman.backend.entity.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,6 +49,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

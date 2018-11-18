@@ -8,6 +8,7 @@ import com.netcracker.viktuk.pman.backend.entity.enums.Role;
 import com.netcracker.viktuk.pman.backend.entity.enums.Status;
 import com.netcracker.viktuk.pman.backend.repository.ProjectRepository;
 import com.netcracker.viktuk.pman.backend.repository.TaskRepository;
+import com.netcracker.viktuk.pman.backend.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,13 +25,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
     private final ProjectRepository projectRepository;
-    private final int TASKS_IN_PAGE = 5;
+
 
     @Autowired
-    public TaskController(TaskRepository taskRepository, ProjectRepository projectRepository) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService, ProjectRepository projectRepository) {
+        this.taskService = taskService;
         this.projectRepository = projectRepository;
     }
 
@@ -40,21 +41,21 @@ public class TaskController {
                                              @RequestParam(name = "filter", required = false) String filter) {
         page--;
         if (filter != null && !filter.isEmpty()) {
-            List<Task> list = taskRepository.findByProject_IdAndNameContaining(id, filter, PageRequest.of(page, TASKS_IN_PAGE));
-            int size = taskRepository.countByProject_IdAndNameContaining(id, filter);
+            List<Task> list = taskService.filterByProject_Id(id, filter,page);
+            int size = taskService.getCountOfFiltered(id, filter);
             return ResponseEntity.ok(new Tasks(size, list));
         } else {
-            List<Task> list = taskRepository.findAllByProject_Id(id, PageRequest.of(page, TASKS_IN_PAGE));
-            int size = taskRepository.countAllByProject_Id(id);
+            List<Task> list = taskService.getByProject_Id(id, page);
+            int size = taskService.getCountByProject_Id(id);
             return ResponseEntity.ok(new Tasks(size, list));
         }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Task> getTaskById(@PathVariable(name = "id") Long id) {
-        Optional<Task> task = taskRepository.findById(id);
-        if (task.isPresent()) {
-            return ResponseEntity.ok(task.get());
+        Task task = taskService.getById(id);
+        if (task!=null) {
+            return ResponseEntity.ok(task);
         }
         return ResponseEntity.notFound().build();
     }
@@ -66,7 +67,7 @@ public class TaskController {
             if (user.getRole() == Role.ADMIN || user.getRole() == Role.PROJECT_MANAGER) {
                 task.setProject(project);
                 task.setAuthor(user);
-                return ResponseEntity.ok(taskRepository.save(task));
+                return ResponseEntity.ok(taskService.save(task));
             }
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -77,9 +78,8 @@ public class TaskController {
     //NOW SAVE ONLY STATUS AND PRIORIY!! TODO!
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Task> update(@AuthenticationPrincipal User user, @RequestBody Task task) {
-        Optional<Task> OptionalTaskFromDb = taskRepository.findById(task.getId());
-        if (OptionalTaskFromDb.isPresent()) {
-            Task taskFromDb = OptionalTaskFromDb.get();
+        Task taskFromDb = taskService.getById(task.getId());
+        if (taskFromDb!=null) {
             if (user.getRole() != Role.ADMIN && user.getRole() != Role.PROJECT_MANAGER) {
                 if ((user.getRole() != Role.DEVELOPER || (taskFromDb.getStatus() != Status.OPEN || task.getStatus() != Status.IN_PROGRESS)) && (taskFromDb.getStatus() != Status.IN_PROGRESS || task.getStatus() != Status.READY_FOR_TEST)) {
                     if (user.getRole() != Role.TESTER || taskFromDb.getStatus() != Status.READY_FOR_TEST || (task.getStatus() != Status.OPEN && task.getStatus() != Status.CLOSED)) {
@@ -100,14 +100,19 @@ public class TaskController {
 */
             taskFromDb.setStatus(task.getStatus());
             taskFromDb.setPriority(task.getPriority());
-            return ResponseEntity.ok(taskRepository.save(taskFromDb));
+            if((user.getRole()==  Role.ADMIN || user.getRole() == Role.PROJECT_MANAGER)) {
+                taskFromDb.setAssigned_username(task.getAssigned_username());
+            }else if(task.getStatus()==Status.READY_FOR_TEST|| task.getStatus()== Status.OPEN || task.getStatus() == Status.CLOSED){
+                taskFromDb.setAssigned(null);
+            }
+            return ResponseEntity.ok(taskService.save(taskFromDb));
         }
         return ResponseEntity.notFound().build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity deleteBillingAccount(@PathVariable(name = "id") Long id) {
-        taskRepository.deleteById(id);
+        taskService.removeById(id);
         return ResponseEntity.noContent().build();
     }
 }
