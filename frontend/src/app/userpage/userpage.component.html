@@ -1,0 +1,26 @@
+<app-navbar></app-navbar>
+
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{{user.username}}</h3>
+    </div>
+    <div class="card-body">
+      <h4 class="card-title">Details</h4>
+      <!--<p class="card-text">{{task.description}}</p>-->
+      <div class="row">
+        <div class="col">
+          <p>Role: <b [innerHtml] = "user.role | role"></b></p>
+        </div>
+        <div class="col">
+          <!--<p *ngIf="task.assigned">Assigned: {{task.assigned}}</p>
+          <p>Estimation: {{task.estimation}}</p>
+          <p>Created: {{task.created | date:'medium'}}</p>
+          <p>Updated: {{task.updated | date:'medium'}}</p>
+          <p>Resolved: {{task.resolved | date:'medium'}}</p>
+          <p>Closed: {{task.closed | date:'medium'}}</p>-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
