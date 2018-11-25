@@ -5,7 +5,7 @@
     <div class="card-header">
       <div class="row">
         <div class="col">
-          <a class="btn btn-primary" href="" data-toggle="modal" data-target="#modalNewTask">New task</a>
+          <a *ngIf="_showCreateButton()"  class="btn btn-primary" href="" data-toggle="modal" data-target="#modalNewTask">New task</a>
         </div>
         <div class="col">
           <input class="form-control" id="filter" #filter_box type="text" placeholder="Filters" (keyup.enter)="_filterTasks(filter_box.value);">
@@ -33,7 +33,7 @@
           <td [innerHtml] = "task.status| status"></td>
           <td>{{task.updated | date}}</td>
           <td>{{task.estimation}}</td>
-          <td>{{task.assigned}}</td>
+          <td><a *ngIf="task.assigned" [routerLink]="['/user/', task.assigned]" routerLinkActive="active">{{task.assigned}}</a></td>
         </tr>
         </tbody>
       </table>

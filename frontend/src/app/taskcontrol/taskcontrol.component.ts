@@ -7,8 +7,9 @@ import {Status} from "../model/enums/status";
 import {AuthService} from "../service/auth.service";
 import {Role} from "../model/enums/role";
 import {UserService} from "../service/user.service";
-import { map } from 'rxjs/operators';
 import {User} from "../model/user";
+import {Comment} from "../model/comment";
+import {CommentService} from "../service/comment.service";
 
 @Component({
   selector: 'app-taskcontrol',
@@ -20,11 +21,13 @@ export class TaskcontrolComponent implements OnInit {
   private task_id:number;
   public current_user: any;
   private task: Task;
+  public comments: Comment[];
+  public editableComment: Comment = new Comment();
   private subscriptions: Subscription[] = [];
   public users_to_assign: User[] = [];
   selected_username_to_assign:string;
 
-  constructor(private activateRoute: ActivatedRoute, private taskService: TaskService, private authService: AuthService, private userService: UserService){
+  constructor(private activateRoute: ActivatedRoute, private taskService: TaskService, private authService: AuthService, private userService: UserService, private commentService: CommentService){
     this.subscriptions.push(activateRoute.params.subscribe(params=>{
       this.task_id = Number(params['task_id']);
     }));
@@ -41,6 +44,13 @@ export class TaskcontrolComponent implements OnInit {
   private loadTask() : void{
     this.subscriptions.push(this.taskService.getTask(this.task_id).subscribe(task => {
       this.task = task as Task;
+      this.udpateCommentsList();
+    }));
+  }
+
+  private udpateCommentsList() : void{
+    this.subscriptions.push(this.commentService.getCommentsByTaskId(this.task.id).subscribe(comments => {
+      this.comments = comments as Comment[];
     }));
   }
 
@@ -50,6 +60,12 @@ export class TaskcontrolComponent implements OnInit {
       this.loadTask();
     },error => {
       this.loadTask();
+    }));
+  }
+
+  public sendMessage():void{
+    this.subscriptions.push(this.commentService.addComment(this.task.id, this.editableComment).subscribe(() => {
+      this.udpateCommentsList();
     }));
   }
 
@@ -100,15 +116,6 @@ export class TaskcontrolComponent implements OnInit {
     if(this.current_user==undefined) return false;
     let role : Role = Role[String(this.current_user.role)];
     if(role == Role.ADMIN|| role == Role.PROJECT_MANAGER ||role == Role.TESTER){
-      return true;
-    }
-    return false;
-  }
-
-  public _showProjectManagerButton(){
-    if(this.current_user==undefined) return false;
-    let role : Role = Role[String(this.current_user.role)];
-    if(role == Role.ADMIN|| role == Role.PROJECT_MANAGER){
       return true;
     }
     return false;

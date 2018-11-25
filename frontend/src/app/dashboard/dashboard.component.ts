@@ -5,6 +5,7 @@ import {TaskService} from "../service/task.service";
 import {Priority} from "../model/enums/priority";
 import {Role} from "../model/enums/role";
 import {Task} from "../model/task";
+import {AuthService} from "../service/auth.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +16,9 @@ export class DashboardComponent implements OnInit {
   //link variables
   private project_id: number;
   private page: number;
+
+  public current_user: any;
+
 
   private prev_page:number;
   private next_page:number;
@@ -30,7 +34,7 @@ export class DashboardComponent implements OnInit {
   keys_for_priority: any[];
   priority_keys = Priority;
 
-  constructor(private activateRoute: ActivatedRoute, private taskService: TaskService, private router: Router) {
+  constructor(private activateRoute: ActivatedRoute, private taskService: TaskService, private router: Router, private authService: AuthService) {
     this.keys_for_priority = Object.keys(this.priority_keys).filter(Number);
     this.subscriptions.push(activateRoute.params.subscribe(params=>{
       this.project_id = Number(params['project_id']);
@@ -41,6 +45,9 @@ export class DashboardComponent implements OnInit {
       }else{
         this.prev_page = 1;
       }
+    }));
+    this.subscriptions.push(this.authService.getUser().subscribe(user=>{
+      this.current_user = user;
     }));
   }
 
@@ -78,5 +85,14 @@ export class DashboardComponent implements OnInit {
     this.filter = filter;
     this.router.navigate(['/', this.project_id, 1]);
     this.udpateTasksList();
+  }
+
+  public _showCreateButton(){
+    if(this.current_user==undefined) return false;
+    let role : Role = Role[String(this.current_user.role)];
+    if(role == Role.ADMIN|| role == Role.PROJECT_MANAGER){
+      return true;
+    }
+    return false;
   }
 }

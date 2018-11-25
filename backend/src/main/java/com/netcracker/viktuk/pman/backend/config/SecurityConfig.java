@@ -1,5 +1,6 @@
 package com.netcracker.viktuk.pman.backend.config;
 
+
 import com.netcracker.viktuk.pman.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -80,6 +80,18 @@ public class TaskController {
     public ResponseEntity<Task> update(@AuthenticationPrincipal User user, @RequestBody Task task) {
         Task taskFromDb = taskService.getById(task.getId());
         if (taskFromDb!=null) {
+/*            if (user.getRole() != Role.ADMIN && user.getRole() != Role.PROJECT_MANAGER) {
+                if(taskFromDb.getAssigned()!=null && taskFromDb.getAssigned().getId().equals(user.getId())) {
+                    if ((user.getRole() != Role.DEVELOPER || (taskFromDb.getStatus() != Status.OPEN || task.getStatus() != Status.IN_PROGRESS)) && (taskFromDb.getStatus() != Status.IN_PROGRESS || task.getStatus() != Status.READY_FOR_TEST)) {
+                        if (user.getRole() != Role.TESTER || taskFromDb.getStatus() != Status.READY_FOR_TEST || (task.getStatus() != Status.OPEN && task.getStatus() != Status.CLOSED)) {
+                            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                        }
+                    }
+                }else{
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
+            }*/
+
             if (user.getRole() != Role.ADMIN && user.getRole() != Role.PROJECT_MANAGER) {
                 if ((user.getRole() != Role.DEVELOPER || (taskFromDb.getStatus() != Status.OPEN || task.getStatus() != Status.IN_PROGRESS)) && (taskFromDb.getStatus() != Status.IN_PROGRESS || task.getStatus() != Status.READY_FOR_TEST)) {
                     if (user.getRole() != Role.TESTER || taskFromDb.getStatus() != Status.READY_FOR_TEST || (task.getStatus() != Status.OPEN && task.getStatus() != Status.CLOSED)) {
@@ -87,24 +99,10 @@ public class TaskController {
                     }
                 }
             }
-/*
-            if(user.getRole() == Role.ADMIN || user.getRole() == Role.PROJECT_MANAGER){
 
-            }else if (user.getRole() == Role.DEVELOPER && (taskFromDb.getStatus() == Status.OPEN && task.getStatus() == Status.IN_PROGRESS) || (taskFromDb.getStatus() == Status.IN_PROGRESS && task.getStatus() == Status.READY_FOR_TEST)) {
-
-            } else if (user.getRole() == Role.TESTER && taskFromDb.getStatus() == Status.READY_FOR_TEST &&(task.getStatus()==Status.OPEN || task.getStatus() == Status.CLOSED)) {
-
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-*/
             taskFromDb.setStatus(task.getStatus());
             taskFromDb.setPriority(task.getPriority());
-            if((user.getRole()==  Role.ADMIN || user.getRole() == Role.PROJECT_MANAGER)) {
-                taskFromDb.setAssigned_username(task.getAssigned_username());
-            }else if(task.getStatus()==Status.READY_FOR_TEST|| task.getStatus()== Status.OPEN || task.getStatus() == Status.CLOSED){
-                taskFromDb.setAssigned(null);
-            }
+            taskFromDb.setAssigned_username(task.getAssigned_username());
             return ResponseEntity.ok(taskService.save(taskFromDb));
         }
         return ResponseEntity.notFound().build();

@@ -4,13 +4,19 @@
   <div class="card">
     <div class="card-header">
       <h3 class="card-title">{{task.name}}</h3>
-      <div class="btn-group">
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalAssignUser" *ngIf="_showProjectManagerButton()">Assign</button>
+      <div class="row">
+      <div class="col">
+        <div class="btn-group">
         <button type="button" class="btn btn-success" (click)="_startTask()" *ngIf="_showDevelopersButton()">Start</button>
         <button type="button" class="btn btn-info" (click)="_readyForTestTask()" *ngIf="_showDevelopersButton()">Ready for test</button>
         <button type="button" class="btn btn-danger" (click)="_reopenTask()" *ngIf="_showTestersButton()">Reopen</button>
         <button type="button" class="btn btn-warning" (click)="_closeTask()" *ngIf="_showTestersButton()">Close</button>
       </div>
+      </div>
+        <div class="col">
+      <button *ngIf="task.assigned==undefined" type="button" class="btn btn-info" data-toggle="modal" data-target="#modalAssignUser">Assign</button>
+        </div>
+        </div>
     </div>
     <div class="card-body">
       <h4 class="card-title">Details</h4>
@@ -21,7 +27,14 @@
           <p>Status: <b [innerHtml] = "task.status| status"></b></p>
         </div>
         <div class="col">
-          <p *ngIf="task.assigned">Assigned: <a [routerLink]="['/user/', task.assigned]" routerLinkActive="active">{{task.assigned}}</a></p>
+          <div class="input-group mb-3" *ngIf="task.assigned">
+            <a [routerLink]="['/user/', task.assigned]" routerLinkActive="active">
+              <input type="text" class="form-control" [value]="task.assigned" disabled="disabled">
+            </a>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#modalAssignUser">Change</button>
+            </div>
+          </div>
           <p>Estimation: {{task.estimation}}</p>
           <p>Created: {{task.created | date:'medium'}}</p>
           <p>Updated: {{task.updated | date:'medium'}}</p>
@@ -30,6 +43,34 @@
         </div>
       </div>
     </div>
+  <div class="card-footer">
+  <ul class="nav nav-tabs">
+    <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#comments_panel">Comments</a></li>
+    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#history_panel">Hystory</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="comments_panel">
+      <div class="input-group mt-3">
+        <input type="text" class="form-control" [(ngModel)]="editableComment.text" (keyup.enter)="sendMessage()">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" (click)="sendMessage()">Send</button>
+        </div>
+      </div>
+      <div class="card bg-light mt-3" *ngFor="let comment of comments">
+        <div class="card-header"><a [routerLink]="['/user/', comment.author.username]" routerLinkActive="active">{{comment.author.username}}</a></div>
+        <div class="card-body">
+          <p class="card-text">{{comment.text}}</p>
+        </div>
+        <div class="card-footer">
+          {{comment.created | date:'medium'}}
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane container fade" id="history_panel">
+      <h3>History</h3>
+    </div>
+  </div>
+  </div>
   </div>
 </div>
 
@@ -37,7 +78,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header text-center">
-        <h4 class="modal-title">Assign a user to this task:</h4>
+        <h4 class="modal-title">Assign a user to this task</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
